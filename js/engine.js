@@ -14,6 +14,29 @@
  * a little simpler to work with.
  */
 
+
+function relMouseCoords(event){
+    //Taken from sample code at 
+    // http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element
+    var totalOffsetX = 0;
+    var totalOffsetY = 0;
+    var canvasX = 0;
+    var canvasY = 0;
+    var currentElement = this;
+
+    do{
+        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+    }
+    while(currentElement = currentElement.offsetParent)
+
+    canvasX = event.pageX - totalOffsetX;
+    canvasY = event.pageY - totalOffsetY;
+
+    return {x:canvasX, y:canvasY}
+}
+HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -138,7 +161,9 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * canvas.col_width, row * canvas.row_height);
             }
         }
-
+	ctx.font="30px Verdana";
+	ctx.fillStyle = 'darkblue';
+	ctx.fillText("Click your sprite to change it!", 0, 35);
 
         renderEntities();
     }
@@ -156,6 +181,12 @@ var Engine = (function(global) {
         });
 
         player.render();
+
+	gems.forEach(function(gem) {
+	    gem.render();
+	});
+
+	score.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -177,6 +208,13 @@ var Engine = (function(global) {
         'images/enemy-bug.png',
         'images/char-boy.png',
 	'images/char-princess-girl.png',
+	'images/char-pink-girl.png',
+	'images/char-cat-girl.png',
+	'images/char-horn-girl.png',
+	'images/Gem Green.png',
+	'images/Gem Orange.png',
+	'images/Gem Blue.png',
+	'images/Heart.png',
     ]);
     Resources.onReady(init);
 
